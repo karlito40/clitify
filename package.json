@@ -1,0 +1,15 @@
+{
+  "name": "clitify",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^4.1.1",
+    "glob": "^7.1.6",
+    "inquirer": "^7.0.6",
+    "lodash": "^4.17.15"
+  }
+}
