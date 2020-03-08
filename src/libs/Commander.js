@@ -1,8 +1,8 @@
 const commander = require('commander');
 const { _Man } = require('./Man');
 
-module.exports.init = function init (version, operations) {
-  commander.version(version);
+module.exports.init = function init (app) {
+  commander.version(app.version);
   
   const mans = operations.filter((op) => op instanceof _Man);
   for (const man of mans) {

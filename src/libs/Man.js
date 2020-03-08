@@ -1,5 +1,5 @@
 class _Man {
-  constructor (name, argsDescriptor, description) {
+  constructor (name, argsDescriptor, description = 'TODO===') {
     this.name = name;
     this.argsDescriptor = argsDescriptor;
     this.description = description;
