@@ -1,10 +1,10 @@
 const commander = require('commander');
-const { _Man } = require('./Man');
+const Man = require('./Man');
 
 module.exports.init = function init (app) {
   commander.version(app.version);
   
-  const mans = operations.filter((op) => op instanceof _Man);
+  const mans = app.commands.map(((command) => Man.load(command.name, command.path)));
   for (const man of mans) {
     const command = commander
       .command(man.getNameAndArgs())

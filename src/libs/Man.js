@@ -73,4 +73,3 @@ Man.load = (commandName, path) => {
 }
 
 module.exports = Man;
-module.exports._Man = _Man;

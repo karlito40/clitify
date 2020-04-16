@@ -1,13 +1,12 @@
 const path = require('path');
 const glob = require('glob');
 const _ = require('lodash');
-const fs = require('fs');
 const { String2 } = require('./utils');
 const { Commander, Navigator } = require('./libs');
 
 const COMMAND_DELIMITER = ':';
 
-module.exports = function cli (workingDir) {
+module.exports = function cli (workingDir, welcomeMessage) {
   process.chdir(workingDir);
 
   const COMMAND_DIR = path.join(process.cwd(), 'commands');
@@ -21,7 +20,6 @@ module.exports = function cli (workingDir) {
     version: '0.0.1',
     commandDir: COMMAND_DIR,
     commands: [],
-    currentSection: null,
     config
   };
 
@@ -42,6 +40,6 @@ module.exports = function cli (workingDir) {
   if (args.length) {
     Commander.init(app);
   } else {
-    Navigator.init(app);
+    Navigator.init(app, welcomeMessage);
   }
 }

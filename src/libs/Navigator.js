@@ -2,52 +2,50 @@ const inquirer = require('inquirer');
 const minimatch = require('minimatch');
 const Man = require('./Man');
 
-const isString = (s) => typeof s === 'string';
 const isObject = (s) => typeof s === 'object';
 
-module.exports.init = init;
-
-function init (app, message = 'Welcome in your fucking cli') {
-  let matters = app.config.tableOfContents;
-  if (app.currentSection) {
-    const section = app.config.tableOfContents
-      .flat(Infinity)
-      .find((matter) => (isObject(matter) && matter.label === app.currentSection));
-
-    matters = section.childrens;
+module.exports = class Navigator {
+  static init (app, title) {
+    const nav = new Navigator(app);
+    nav.showTableOfContents(app.config.tableOfContents, title);
+    return nav;
   }
 
-  const choices = [];
+  constructor (app) {
+    this.app = app;
+  }
 
-  matters.forEach((matter) => {
-    if (isObject(matter)) {
-      choices.push({
-        name: matter.label,
-        value: () => {
-          app.currentSection = matter.label;
-          init(app, matter.label);
-        }
-      });
-    } else {
-      const commandsToDisplay = getDisplayableCommands(app.commands, matter);
-      choices.push(...commandsToDisplay.map((command) => {
-        const man = Man.load(command.name, command.path);
-        return {
-          name: man.getDescription(),
-          value: man.getAction()
-        }
-      }));
-    }
-  });
+  showTableOfContents (tableOfContents, title) {
+    const choices = [];
+    tableOfContents.forEach((section) => {
+      if (isObject(section)) {
+        choices.push({
+          name: section.label,
+          value: () => this.showTableOfContents(section.tableOfContents, section.label)
+        });
+      } else {
+        // On utilise une chaine magique du style "apollo:*"
+        // pour lister toutes les commandes d'un repertoire
+        const commandsToDisplay = getDisplayableCommands(this.app.commands, section);
+        choices.push(...commandsToDisplay.map((command) => {
+          const man = Man.load(command.name, command.path);
+          return {
+            name: man.getDescription(),
+            value: man.getAction()
+          }
+        }));
+      }
+    });
 
-  inquirer.prompt([
-    {
-      type: 'list',
-      name: 'action',
-      message,
-      choices
-    }
-  ]).then(({ action }) => action());
+    inquirer.prompt([
+      {
+        type: 'list',
+        name: 'action',
+        message: title,
+        choices
+      }
+    ]).then(({ action }) => action());
+  }
 }
 
 function getDisplayableCommands (commands, matcher) {
