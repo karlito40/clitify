@@ -12,8 +12,9 @@ module.exports = function cli (workingDir, welcomeMessage) {
   const COMMAND_DIR = path.join(process.cwd(), 'commands');
   
   const config = {
-    tableOfContents: [],
-    ...require(path.join(process.cwd() + '/clitify.config.js'))
+    tableOfContents: [
+      ...require(path.join(process.cwd() + '/table-of-contents.clitify.js'))
+    ],
   };
 
   const app = {
@@ -26,7 +27,7 @@ module.exports = function cli (workingDir, welcomeMessage) {
   const commandPaths = glob.sync('**/*.js', { cwd: COMMAND_DIR });
   app.commands = commandPaths.map((commandPath) => {
     const commandName = String2.replace(commandPath, {
-      [path.sep]: COMMAND_DELIMITER,
+      '/': COMMAND_DELIMITER,
       '.js': ''
     });
 

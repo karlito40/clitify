@@ -1,13 +1,13 @@
 const inquirer = require('inquirer');
-const minimatch = require('minimatch');
+const assert = require('assert');
 const Man = require('./Man');
 
-const isObject = (s) => typeof s === 'object';
+const isString = (s) => typeof s === 'string';
 
 module.exports = class Navigator {
-  static init (app, title) {
+  static init (app, welcomeMessage = 'Deep dive into the abyss') {
     const nav = new Navigator(app);
-    nav.showTableOfContents(app.config.tableOfContents, title);
+    nav.showSectionContents(app.config.tableOfContents, welcomeMessage);
     return nav;
   }
 
@@ -15,18 +15,20 @@ module.exports = class Navigator {
     this.app = app;
   }
 
-  showTableOfContents (tableOfContents, title) {
+  showSectionContents (contents, message) {
+    assert(contents, 'No content found');
+
     const choices = [];
-    tableOfContents.forEach((section) => {
-      if (isObject(section)) {
+    contents.forEach((section) => {
+      if (section.title) {
         choices.push({
-          name: section.label,
-          value: () => this.showTableOfContents(section.tableOfContents, section.label)
+          name: section.title,
+          value: () => this.showSectionContents(section.contents, section.title)
         });
-      } else {
-        // On utilise une chaine magique du style "apollo:*"
-        // pour lister toutes les commandes d'un repertoire
-        const commandsToDisplay = getDisplayableCommands(this.app.commands, section);
+      }
+  
+      if (section.commands) {
+        const commandsToDisplay = getDisplayableCommands(this.app.commands, section.commands);
         choices.push(...commandsToDisplay.map((command) => {
           const man = Man.load(command.name, command.path);
           return {
@@ -41,26 +43,31 @@ module.exports = class Navigator {
       {
         type: 'list',
         name: 'action',
-        message: title,
+        message,
         choices
       }
     ]).then(({ action }) => action());
   }
 }
 
-function getDisplayableCommands (commands, matcher) {
+function getDisplayableCommands (commands, matchers) {
+  matchers = isString(matchers) ? [matchers] : matchers;
+  return matchers.reduce((acc, matcher) => {
+    return [...acc, ...getDisplayableCommandsFromMatcher(commands, matcher)];
+  }, [])
+}
+
+function getDisplayableCommandsFromMatcher (commands, matcher) {
+  const matcherDepth = matcher.split(':').length;
+  if (!matcherDepth) {
+    return [];
+  }
+
   return commands.filter((command) => {
-    return minimatch(command.name, matcher);
+    const commandDepth = command.name.split(':').length;
+    // commandDepth need to be subtract by 1 to ignore the method name from the command
+    const hasSameDepth = matcherDepth === commandDepth - 1;
+    const isMatching = command.name.includes(matcher);
+    return hasSameDepth && isMatching;
   });
 }
-// const currentDepth = String2.countOccurrence(app.currentSection);
-
-// const commandsToDisplay = app.commands.filter(({ command }) => {
-//   const commandDepth = String2.countOccurrence(command.name);
-//   const hasSameRoot = command.name.startsWith(app.currentSection);
-//   const atSameDepth = currentDepth === commandDepth;
-
-//   return hasSameRoot && atSameDepth && matter.commands.some((commandMatcher) => {
-//     return minimatch(command.name, commandMatcher);
-//   });
-// });
