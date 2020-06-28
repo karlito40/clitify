@@ -1,4 +1,2 @@
-☐ module alias
-☐ bee interface
-☐ accept ts extension
-☐ dissociate commander init from inquirer init (remove operations array)
+☐ typescript support
+☐ bin: cli without index.js (clitify --welcome="My welcome message" & pipe down args) (ex: webpack)
