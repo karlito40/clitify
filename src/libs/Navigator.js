@@ -1,13 +1,15 @@
 const inquirer = require('inquirer');
 const assert = require('assert');
 const Man = require('./Man');
+const { _Section } = require('./Section');
+const { _Commands } = require('./Commands');
 
 const isString = (s) => typeof s === 'string';
 
 module.exports = class Navigator {
   static init (app, welcomeMessage = 'Deep dive into the abyss') {
     const nav = new Navigator(app);
-    nav.showSectionContents(app.config.tableOfContents, welcomeMessage);
+    nav.showTableOfContents(app.config.tableOfContents, welcomeMessage);
     return nav;
   }
 
@@ -15,27 +17,17 @@ module.exports = class Navigator {
     this.app = app;
   }
 
-  showSectionContents (contents, message) {
+  showTableOfContents (contents, message) {
     assert(contents, 'No content found');
 
     const choices = [];
-    contents.forEach((section) => {
-      if (section.title) {
-        choices.push({
-          name: section.title,
-          value: () => this.showSectionContents(section.contents, section.title)
-        });
-      }
-  
-      if (section.commands) {
-        const commandsToDisplay = getDisplayableCommands(this.app.commands, section.commands);
-        choices.push(...commandsToDisplay.map((command) => {
-          const man = Man.load(command.name, command.path);
-          return {
-            name: man.getDescription(),
-            value: man.getAction()
-          }
-        }));
+    contents.forEach((content) => {
+      if (content instanceof _Section) {
+        choices.push(this.buildSection(content));
+      } else if (content instanceof _Commands) {
+        const commandChoices = this.buildCommands(content);
+        assert(commandChoices.length, `No commands match ${content}`);
+        choices.push(...commandChoices);
       }
     });
 
@@ -47,6 +39,24 @@ module.exports = class Navigator {
         choices
       }
     ]).then(({ action }) => action());
+  }
+
+  buildSection (section) {
+    return {
+      name: section.title,
+      value: () => this.showTableOfContents(section.childrens, section.title)
+    };
+  }
+
+  buildCommands (commands) {
+    const commandsToDisplay = getDisplayableCommands(this.app.commands, commands.matchers);
+    return commandsToDisplay.map((command) => {
+      const man = Man.load(command.name, command.path);
+      return {
+        name: man.getDescription(),
+        value: man.getAction()
+      }
+    });
   }
 }
 
@@ -66,7 +76,7 @@ function getDisplayableCommandsFromMatcher (commands, matcher) {
   return commands.filter((command) => {
     const commandDepth = command.name.split(':').length;
     // commandDepth need to be subtract by 1 to ignore the method name from the command
-    const hasSameDepth = matcherDepth === commandDepth - 1;
+    const hasSameDepth = matcherDepth === Math.max(commandDepth - 1, 1);
     const isMatching = command.name.includes(matcher);
     return hasSameDepth && isMatching;
   });
