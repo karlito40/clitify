@@ -1,8 +1,8 @@
 const inquirer = require('inquirer');
 const assert = require('assert');
 const Man = require('./Man');
-const { _Section } = require('./Section');
-const { _Commands } = require('./Commands');
+const { _Section } = require('../toc/Section');
+const { _Commands } = require('../toc/Commands');
 
 const isString = (s) => typeof s === 'string';
 

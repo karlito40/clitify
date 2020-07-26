@@ -2,7 +2,7 @@ const path = require('path');
 const glob = require('glob');
 const _ = require('lodash');
 const { String2 } = require('./utils');
-const { Commander, Navigator } = require('./libs');
+const { Commander, Navigator } = require('./core');
 
 const COMMAND_DELIMITER = ':';
 

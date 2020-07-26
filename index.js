@@ -1,4 +1,4 @@
 module.exports = {
-  ...require('./src/libs'),
+  ...require('./src/core'),
   cli: require('./src/cli')
 };

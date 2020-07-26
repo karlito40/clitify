@@ -61,7 +61,7 @@ Man.select = (commandName) => {
 
 Man.load = (commandName, path) => {
   const man = Man.select(commandName);
-  // Users may not export a function to rather use
+  // Users may not export a function to use
   // the man.action() method directly inside the given file.
   delete require.cache[path];
   const handler = require(path);

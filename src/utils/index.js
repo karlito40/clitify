@@ -1,3 +1,5 @@
 module.exports = {
-  String2: require('./String2')
+  ...require('./is'),
+  String2: require('./String2'),
+  resolveSignature: require('./resolve-signature')
 };

@@ -1,4 +1,4 @@
-const { Section, Commands } = require('clitify');
+const { Section, Commands } = require('clitify/toc');
 
 module.exports = [
   Section('👽   Back', [
@@ -11,6 +11,6 @@ module.exports = [
   ]),
 
   Section('Front', [
-    Commands('toto')
+    Commands('callcmd')
   ])
 ]; 
