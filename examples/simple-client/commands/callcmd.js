@@ -1,4 +1,4 @@
-const { cmd } = require('clitify');
+const { cmd } = require('cliver');
 
 module.exports = function () {
   console.log('> toto');

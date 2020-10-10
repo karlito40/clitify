@@ -1,4 +1,4 @@
-const { Section, Commands } = require('clitify/toc');
+const { Section, Commands } = require('cliver/toc');
 
 module.exports = [
   Section('👽   Back', [

@@ -1,3 +1,3 @@
-const { cli } = require('clitify');
+const { cli } = require('cliver');
 
 cli(__dirname);

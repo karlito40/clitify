@@ -13,7 +13,7 @@ module.exports = function cli (workingDir, welcomeMessage) {
   
   const config = {
     tableOfContents: [
-      ...require(path.join(process.cwd() + '/toc.clitify.js'))
+      ...require(path.join(process.cwd() + '/toc.cliver.js'))
     ],
   };
 

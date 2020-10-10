@@ -1,4 +1,4 @@
-const { Man } = require('clitify');
+const { Man } = require('cliver');
 
 // Should be resolved by JSDoc
 Man('<service>', 'Upload un schema vers apollo')

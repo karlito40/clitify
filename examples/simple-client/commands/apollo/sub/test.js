@@ -1,4 +1,4 @@
-const { Man } = require('clitify');
+const { Man } = require('cliver');
 
 Man('<service>', 'Apollo Sub Method Test');
 

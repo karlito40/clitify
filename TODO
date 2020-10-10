@@ -1,2 +1,2 @@
 ☐ typescript support
-☐ bin: cli without index.js (clitify --welcome="My welcome message" & pipe down args) (ex: webpack)
+☐ bin: cli without index.js (cliver --welcome="My welcome message" & pipe down args) (ex: webpack)
